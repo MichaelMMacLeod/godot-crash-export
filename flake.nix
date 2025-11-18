@@ -16,13 +16,12 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pkgConfig = {
+        rustPkg = pkgs.rustPlatform.buildRustPackage {
           pname = "librust";
           version = "0.1.0";
           src = ./rust;
           cargoLock.lockFile = ./rust/Cargo.lock;
         };
-        rustPkg = pkgs.rustPlatform.buildRustPackage pkgConfig;
         godotVersion = builtins.replaceStrings [ "-" ] [ "." ] pkgs.godot.version;
       in
       {
@@ -70,8 +69,28 @@
           GODOT_PRESET = "Linux";
           FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
 
-          buildPhase = builtins.readFile ./scripts/buildPhase.sh;
-          installPhase = builtins.readFile ./scripts/installPhase.sh;
+          buildPhase = ''
+            HOME=$(mktemp -d)
+            export HOME
+
+            mkdir -p "$HOME/$GODOT_EXPORT_TEMPLATES_LOCAL_DIR"
+            ln -s "$GODOT_EXPORT_TEMPLATES_NIX_DIR/$GODOT_VERSION" "$HOME/$GODOT_EXPORT_TEMPLATES_LOCAL_DIR/$GODOT_VERSION"
+
+            mkdir build
+            cp "$GAME_SHARED_LIBRARY_OUT/lib/librust.so" "build/librust.so"
+
+            godot --path . --headless --export-debug "$GODOT_PRESET"
+          '';
+
+          installPhase = ''
+            install -D -m 755 -t "$out/share/TestProject" "./build/TestProject.x86_64"
+            install -D -m 644 -t "$out/share/TestProject" "./build/TestProject.pck"
+            install -D -m 644 -t "$out/share/TestProject" "./build/librust.so"
+            install -d -m 755 "$out/bin"
+
+            makeWrapper "$out/share/TestProject/TestProject.x86_64" "$out/bin/TestProject.x86_64" \
+                --add-flags "--main-pack $out/share/TestProject/TestProject.pck"
+          '';
         };
       }
     );
