@@ -4,4 +4,4 @@ compatibility_minimum = 4.1
 reloadable = true
 
 [libraries]
-linux.debug.x86_64 = "res://../rust/target/debug/librust.so"
+linux.debug.x86_64 = "res://build/librust.so"
