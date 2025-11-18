@@ -10,6 +10,12 @@ repository to reproduce the crash (requires
 nix build
 ```
 
+You can also just directly build it with without cloning the repository manually:
+
+```sh
+nix build github:MichaelMMacLeod/godot-crash-export
+```
+
 You may need to specify --experimental-features 'nix-command flakes' to enable flakes.
 
 Building should fail with this crash:
