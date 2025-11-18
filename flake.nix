@@ -70,7 +70,6 @@
             GAME_SHARED_LIBRARY_OUT = "${rustPkg.out}";
             GODOT_PRESET = "Linux";
             FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
-            FONTCONFIG_PATH = "${pkgs.fontconfig.out}/etc/fonts";
 
             buildPhase = builtins.readFile ./scripts/buildPhase.sh;
             installPhase = builtins.readFile ./scripts/installPhase.sh;
