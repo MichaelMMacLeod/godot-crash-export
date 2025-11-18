@@ -70,6 +70,7 @@
             FONTCONFIG_PATH = "${pkgs.fontconfig.out}/etc/fonts";
 
             buildPhase = builtins.readFile ./scripts/buildPhase.sh;
+            installPhase = builtins.readFile ./scripts/installPhase.sh;
           };
         };
       }
