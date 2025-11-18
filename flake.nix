@@ -23,6 +23,7 @@
           cargoLock.lockFile = ./rust/Cargo.lock;
         };
         rustPkg = pkgs.rustPlatform.buildRustPackage pkgConfig;
+        godotVersion = builtins.replaceStrings [ "-" ] [ "." ] pkgs.godot.version;
       in
       {
         packages = {
@@ -41,7 +42,7 @@
             buildInputs = with pkgs; [
               makeWrapper
               rustPkg
-              godotPackages_4_5.godot
+              godot
             ];
 
             runtimeDependencies = with pkgs; [
@@ -62,8 +63,10 @@
               pulseaudio.out
             ];
 
-            GODOT_VERSION_DIR = "4.5.1.stable";
-            GODOT_EXPORT_TEMPLATES_DIR = "${pkgs.godotPackages_4_5.export-templates-bin.out}/share/godot/export_templates/";
+            GODOT_VERSION = "${godotVersion}";
+            GODOT_EXPORT_TEMPLATES_NIX_DIR = "${pkgs.godotPackages.export-templates-bin.out}/share/godot/export_templates";
+            GODOT_EXPORT_TEMPLATES_LOCAL_DIR = ".local/share/godot/export_templates";
+
             GAME_SHARED_LIBRARY_OUT = "${rustPkg.out}";
             GODOT_PRESET = "Linux";
             FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
